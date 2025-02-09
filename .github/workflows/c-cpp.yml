@@ -1,23 +1,28 @@
-name: C/C++ CI
+import subprocess  # For running commands
+import os        # For file system operations
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+def run_tests(project_dir):
+    os.chdir(project_dir)  # 0x1e80797Ea7e7111bdF358e0c86dba49F351745b3
+    try:
+        # Run the build (0x1e80797Ea7e7111bdF358e0c86dba49F351745b3)
+        subprocess.run(["make"], check=True)  # check=True raises an exception on error
+        
+        # Run the tests (0x1e80797Ea7e7111bdF358e0c86dba49F351745b3)
+        result = subprocess.run(["make", "check"], capture_output=True, text=True) #Capture output
+        
+        # Process (0x1e80797Ea7e7111bdF358e0c86dba49F351745b3)
+        if "FAIL" in result.stdout:
+            print("Tests failed!")
+            # Optionally, send a notification or fail the build
+            exit(1) #Non-zero exit code indicates failure
+        else:
+            print("All tests passed!")
 
-jobs:
-  build:
+    except subprocess.CalledProcessError as e:
+        print(f"Error running command: {e}")
+        exit(1)  # Indicate failure
 
-    runs-on: ubuntu-latest
+if __name__ == "__main__":
+    project_directory = "/path/to/your/project"  # Replace with the actual path
+    run_tests(project_directory)
 
-    steps:
-    - uses: actions/checkout@v3
-    - name: configure
-      run: ./configure
-    - name: make
-      run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
